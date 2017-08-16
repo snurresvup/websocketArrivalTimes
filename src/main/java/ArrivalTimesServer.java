@@ -81,7 +81,7 @@ public class ArrivalTimesServer {
 
   public StreamOutput getInstantPredictions(){
     try {
-      //arrivalTimes.clear();
+      arrivalTimes.clear();
 
       InputStream inputStream = (new URL("http://countdown.api.tfl.gov.uk/interfaces/ura/instant_V1")).openStream();
 
