@@ -1,7 +1,10 @@
+package POJOs;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ArrivalEntry {
+  private String id;
   private String stationName;
   private String lineName;
   private double arrivalTime;
@@ -17,6 +20,23 @@ public class ArrivalEntry {
     this.lineName = lineName;
     this.arrivalTime = arrivalTime;
     this.timestamp = timestamp;
+  }
+
+  public ArrivalEntry(String id, String stationName, String lineName, double arrivalTime, long timestamp) {
+    this.id = id;
+    this.stationName = stationName;
+    this.lineName = lineName;
+    this.arrivalTime = arrivalTime;
+    this.timestamp = timestamp;
+  }
+
+  @JsonProperty
+  public String getId() {
+    return id;
+  }
+
+  public void setId(String id) {
+    this.id = id;
   }
 
   @JsonProperty

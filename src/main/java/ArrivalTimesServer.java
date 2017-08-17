@@ -1,3 +1,4 @@
+import POJOs.ArrivalEntry;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.glassfish.grizzly.streams.StreamOutput;
 

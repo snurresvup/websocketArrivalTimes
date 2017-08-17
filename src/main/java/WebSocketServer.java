@@ -1,5 +1,3 @@
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.glassfish.tyrus.server.Server;
 
 import javax.websocket.DeploymentException;
@@ -13,7 +11,7 @@ public class WebSocketServer {
   }
 
   private static void startServer() {
-    Server server = new Server("localhost", 8082, "/websockets", ArrivalTimesServer.class);
+    Server server = new Server("localhost", 8082, "/websockets", ArrivalTimesByIdServer.class);
 
     try {
       server.start();
