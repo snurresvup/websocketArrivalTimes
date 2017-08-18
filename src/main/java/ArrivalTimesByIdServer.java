@@ -3,10 +3,7 @@ import POJOs.ArrivalPrediction;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import javax.websocket.OnClose;
-import javax.websocket.OnMessage;
-import javax.websocket.OnOpen;
-import javax.websocket.Session;
+import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,7 +15,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 @ServerEndpoint("/arrivalPredictionsById")
 public class ArrivalTimesByIdServer {
@@ -45,7 +41,6 @@ public class ArrivalTimesByIdServer {
        public void run() {
          if(sessionToStopIdMap.get(session) == null) return;
          List<ArrivalPrediction> arrivalPredictions = getArrivalPredictionsForId(sessionToStopIdMap.get(session));
-         List<ArrivalEntry> arrivalEntries = convertToArrivalEntries(arrivalPredictions);
          sendArrivalEntriesToSession(arrivalPredictions, session);
        }
      };
@@ -71,6 +66,11 @@ public class ArrivalTimesByIdServer {
     sessionToStopIdMap.remove(session);
   }
 
+  @OnError
+  public void onError(Session session, Throwable throwable){
+    sessionToFutureMap.get(session).cancel(true);
+  }
+
   private void sendArrivalEntriesToSession(List<ArrivalPrediction> arrivalPredictions, Session session) {
     try {
       session.getBasicRemote().sendText(objectMapper.writeValueAsString(arrivalPredictions));
@@ -87,7 +87,7 @@ public class ArrivalTimesByIdServer {
     } catch (IOException e) {
       e.printStackTrace();
     }
-    return null;
+    return new ArrayList<>();
   }
 
   private List<ArrivalEntry> convertToArrivalEntries(List<ArrivalPrediction> arrivalPredictions) {
