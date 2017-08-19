@@ -81,7 +81,7 @@ public class ArrivalTimesByIdServer {
 
   private List<ArrivalPrediction> getArrivalPredictionsForId(String id) {
     try {
-      InputStream inputStream = (new URL("http://localhost:8080/arrival-predictions?id=" + id)).openStream();
+      InputStream inputStream = (new URL("http://departure-times-api:8080/arrival-predictions?id=" + id)).openStream();
       List<ArrivalPrediction> arrivalPredictions = objectMapper.readValue(inputStream, new TypeReference<List<ArrivalPrediction>>(){});
       return arrivalPredictions;
     } catch (IOException e) {
