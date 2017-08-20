@@ -1,4 +1,4 @@
-import POJOs.ArrivalEntry;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.glassfish.grizzly.streams.StreamOutput;
 
@@ -14,15 +14,20 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * An older websocket implementation that is no longer used.
+ * This socket would get the arrival predictions from the API by the name of the station.
+ */
+
 @ServerEndpoint("/arrivalPredictions")
 public class ArrivalTimesServer {
   private Map<String, Set<Session>> stationToSessionsMap;
   private Map<Session, String> sessionToStationMap;
   private ObjectMapper objectMapper;
-  private HashMap<String, HashMap<String, ArrivalEntry>> arrivalTimes;
+  //private HashMap<String, HashMap<String, ArrivalEntry>> arrivalTimes;
 
   public ArrivalTimesServer() {
-    arrivalTimes = new HashMap<>();
+    //arrivalTimes = new HashMap<>();
     objectMapper = new ObjectMapper();
     stationToSessionsMap = Collections.synchronizedMap(new HashMap<String, Set<Session>>());
     sessionToStationMap = Collections.synchronizedMap(new HashMap<Session, String>());
@@ -82,7 +87,7 @@ public class ArrivalTimesServer {
 
   public StreamOutput getInstantPredictions(){
     try {
-      arrivalTimes.clear();
+      //arrivalTimes.clear();
 
       InputStream inputStream = (new URL("http://countdown.api.tfl.gov.uk/interfaces/ura/instant_V1")).openStream();
 
@@ -105,13 +110,13 @@ public class ArrivalTimesServer {
         String lineName = line1[2];
 
 
-        if(!arrivalTimes.containsKey(stationName)){
-          arrivalTimes.put(stationName, new HashMap<String, ArrivalEntry>());
-        }
-        if(!arrivalTimes.get(stationName).containsKey(lineName) ||
-            arrivalTimes.get(stationName).get(lineName).getArrivalTime() > arrivalTime){
-          arrivalTimes.get(stationName).put(lineName, new ArrivalEntry(stationName, lineName, arrivalTime, timeStamp));
-        }
+        //if(!arrivalTimes.containsKey(stationName)){
+        //  arrivalTimes.put(stationName, new HashMap<String, ArrivalEntry>());
+        //}
+        //if(!arrivalTimes.get(stationName).containsKey(lineName) ||
+        //    arrivalTimes.get(stationName).get(lineName).getArrivalTime() > arrivalTime){
+        //  arrivalTimes.get(stationName).put(lineName, new ArrivalEntry(stationName, lineName, arrivalTime, timeStamp));
+        //}
 
         /*if(stationToSessionsMap.get(stationName) != null) {
           for (Session s : stationToSessionsMap.get(stationName)) {
@@ -134,8 +139,8 @@ public class ArrivalTimesServer {
 
   private void sendData() throws IOException {
     for(Session session : sessionToStationMap.keySet()){
-      if(arrivalTimes.get(sessionToStationMap.get(session)) == null) continue;
-      session.getBasicRemote().sendText(objectMapper.writeValueAsString(arrivalTimes.get(sessionToStationMap.get(session))));
+      //if(arrivalTimes.get(sessionToStationMap.get(session)) == null) continue;
+      //session.getBasicRemote().sendText(objectMapper.writeValueAsString(arrivalTimes.get(sessionToStationMap.get(session))));
     }
   }
 

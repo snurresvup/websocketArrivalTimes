@@ -1,4 +1,3 @@
-import POJOs.ArrivalEntry;
 import POJOs.ArrivalPrediction;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -8,14 +7,16 @@ import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * A websocket for providing a continuous stream of messages containing arrival predictions for London buses.
+ * For each connection the service executes a runnable every 5 seconds, that fetches arrival info from the API, and relays it through the websocket.
+ */
 @ServerEndpoint("/arrivalPredictionsById")
 public class ArrivalTimesByIdServer {
   private Map<Session, ScheduledFuture> sessionToFutureMap;
@@ -79,6 +80,11 @@ public class ArrivalTimesByIdServer {
     }
   }
 
+  /**
+   * Gets the current arrival predictions for the stop ID from the API component
+   * @param id the stop id for which to get arrival predictions
+   * @return A list of ArrivalPrediction for the given stop id
+   */
   private List<ArrivalPrediction> getArrivalPredictionsForId(String id) {
     try {
       InputStream inputStream = (new URL("http://departure-times-api:8080/arrival-predictions?id=" + id)).openStream();
@@ -88,20 +94,5 @@ public class ArrivalTimesByIdServer {
       e.printStackTrace();
     }
     return new ArrayList<>();
-  }
-
-  private List<ArrivalEntry> convertToArrivalEntries(List<ArrivalPrediction> arrivalPredictions) {
-    List<ArrivalEntry> arrivalEntries = new ArrayList<>();
-
-    for(ArrivalPrediction prediction : arrivalPredictions){
-      SimpleDateFormat parser = new SimpleDateFormat("yyy-MM-dd'T'HH:mm:ss'Z'");
-      try {
-        arrivalEntries.add(new ArrivalEntry(prediction.getId(), prediction.getStationName(), prediction.getLineName(), prediction.getTimeToStation(), parser.parse(prediction.getTimestamp()).getTime()));
-      } catch (ParseException e) {
-        e.printStackTrace();
-      }
-    }
-
-    return arrivalEntries;
   }
 }

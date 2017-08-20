@@ -1,9 +1,6 @@
 import org.glassfish.tyrus.server.Server;
 
 import javax.websocket.DeploymentException;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 
 public class WebSocketServer {
   public static void main(String[] args) {
@@ -15,13 +12,10 @@ public class WebSocketServer {
 
     try {
       server.start();
-      BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-      System.out.println("Press any key to stop the server.");
-      System.out.println(reader.readLine());
       while(!Thread.interrupted()){
 
       }
-    } catch (DeploymentException | IOException e) {
+    } catch (DeploymentException e) {
       e.printStackTrace();
     } finally {
       server.stop();
